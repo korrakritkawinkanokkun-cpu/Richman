@@ -58,6 +58,21 @@ def _fmt_pct(v):
         return "-"
 
 
+def _fmt_dividend(v):
+    """
+    dividend yield จาก yfinance มาไม่สม่ำเสมอ:
+    บางตัวเป็นสัดส่วน (0.058 = 5.8%), บางตัวเป็น % แล้ว (5.8)
+    ตรวจขนาด: ถ้า >= 1 ถือว่าเป็น % อยู่แล้ว, ถ้า < 1 ค่อยคูณ 100
+    """
+    if v is None:
+        return "-"
+    try:
+        pct = v if v >= 1 else v * 100
+        return f"{pct:.1f}%"
+    except Exception:
+        return "-"
+
+
 def _fmt_num(v, suffix=""):
     if v is None:
         return "-"
@@ -94,7 +109,7 @@ def format_fundamental_line(fund: dict) -> str:
     if fund.get("roe") is not None:
         parts.append(f"ROE {_fmt_pct(fund['roe'])}")
     if fund.get("dividend_yield") is not None:
-        parts.append(f"ปันผล {_fmt_pct(fund['dividend_yield'])}")
+        parts.append(f"ปันผล {_fmt_dividend(fund['dividend_yield'])}")
     mc = _fmt_mktcap(fund.get("market_cap"))
     if mc != "-":
         parts.append(f"Cap {mc}")
