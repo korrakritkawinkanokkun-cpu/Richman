@@ -77,7 +77,13 @@ DST: ตลาดสหรัฐฯ = ไทย 20:30 (EDT มี.ค.-พ.ย.)
 4. MACD histogram ตัดขึ้น
 5. Sideways แคบ + ชนแนวต้าน
 
-แจ้งเตือนเฉพาะ **score ≥ 3 และมี breakout setup/เบรคแล้ว** (ปรับที่ `config.py`)
+**Pattern ที่จับได้ (อย่างน้อย 1 อย่าง):**
+- 🎯 ตั้งท่าเบรค (sideways แคบ ชนแนวต้าน)
+- ⚡ เบรคแล้ว (ทะลุแนวต้าน + volume ยืนยัน)
+- 🔄 RSI Bullish Divergence (ราคาทำ lower low แต่ RSI ทำ higher low = ทรง low กำลังกลับตัว)
+
+แจ้งเตือนเฉพาะ **score ≥ 3 และมีอย่างน้อย 1 pattern** (ปรับที่ `config.py`)
+เปิด/ปิด divergence ที่ `ENABLE_RSI_DIVERGENCE`
 
 ## เปิด/ปิด feature (ใน config.py)
 - `ENABLE_FUNDAMENTAL` — ชั้นพื้นฐาน
