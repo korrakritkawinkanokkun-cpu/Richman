@@ -1,14 +1,10 @@
 name: Stock Scanner
 
-# ตั้งเวลา 3 รอบ/วัน — GitHub Actions ใช้ UTC ต้องลบ 7 ชม.จากเวลาไทย
-# ไทย 10:15 = UTC 03:15 | ไทย 16:00 = UTC 09:00 | ไทย 20:45 = UTC 13:45
+# ใช้ cron-job.org ยิง trigger จากภายนอก (ตรงเวลากว่า GitHub cron)
+# ไม่ใช้ schedule ของ GitHub แล้ว เพราะดีเลย์บ่อย
+# ยังกดรันเองจากหน้าเว็บได้ผ่าน workflow_dispatch
 on:
-  schedule:
-    - cron: '15 3 * * 1-5'    # SET รอบเช้า (ไทย 10:15 จ-ศ)
-    - cron: '5 5 * * *'        # TEST ทดสอบ (ไทย 12:05) - ลบทิ้งหลังเทส
-    - cron: '0 9 * * 1-5'     # SET รอบบ่าย (ไทย 16:00 จ-ศ)
-    - cron: '45 13 * * 1-5'   # US รอบค่ำ (ไทย 20:45 จ-ศ, ช่วง EDT)
-  workflow_dispatch:           # กดรันเองจากหน้าเว็บได้
+  workflow_dispatch:
     inputs:
       market:
         description: 'ตลาดที่จะสแกน'
@@ -19,7 +15,7 @@ on:
       test_mode:
         description: 'โหมดทดสอบ (สแกนแค่ 5 ตัว เร็ว)'
         required: true
-        default: 'true'
+        default: 'false'
         type: choice
         options: ['true', 'false']
 
@@ -40,32 +36,17 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Decide market by time (สำหรับ schedule)
-        id: market
-        run: |
-          if [ -n "${{ github.event.inputs.market }}" ]; then
-            # กดรันเอง: ใช้ค่าที่เลือก
-            echo "market=${{ github.event.inputs.market }}" >> $GITHUB_OUTPUT
-          else
-            # schedule: เลือกตามเวลา UTC (รอบ 13:xx = US, อื่นๆ = SET)
-            HOUR=$(date -u +%H)
-            if [ "$HOUR" = "13" ]; then
-              echo "market=US" >> $GITHUB_OUTPUT
-            else
-              echo "market=SET" >> $GITHUB_OUTPUT
-            fi
-          fi
-
       - name: Run scanner
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_IDS: ${{ secrets.TELEGRAM_CHAT_IDS }}
         run: |
-          # ถ้ากดรันเองและเลือก test_mode=true ให้เพิ่ม --test
+          MARKET="${{ github.event.inputs.market }}"
+          MARKET="${MARKET:-SET}"
           if [ "${{ github.event.inputs.test_mode }}" = "true" ]; then
-            python main_scanner.py --market ${{ steps.market.outputs.market }} --test
+            python main_scanner.py --market "$MARKET" --test
           else
-            python main_scanner.py --market ${{ steps.market.outputs.market }}
+            python main_scanner.py --market "$MARKET"
           fi
 
       - name: Commit cache & progress
