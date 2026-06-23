@@ -35,6 +35,7 @@ US_MIN_AVG_VOLUME = 500_000
 MIN_SCORE_TO_ALERT = 3
 LOOKBACK_DAYS_FOR_RANGE = 15
 HISTORY_PERIOD = "6mo"
+ENABLE_RSI_DIVERGENCE = True   # ตรวจ RSI bullish divergence (ทรง low กำลังกลับตัว)
 
 # --- ชั้นเสริม (Stage 3) ---
 ENABLE_FUNDAMENTAL = True

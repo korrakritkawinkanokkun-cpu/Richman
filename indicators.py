@@ -6,6 +6,7 @@ indicators.py
 
 import pandas as pd
 import numpy as np
+# import แบบ lazy ใน detect_setup เพื่อเลี่ยง circular import
 
 
 def calc_ema(series: pd.Series, period: int) -> pd.Series:
@@ -13,14 +14,17 @@ def calc_ema(series: pd.Series, period: int) -> pd.Series:
 
 
 def calc_rsi(series: pd.Series, period: int = 14) -> pd.Series:
+    """RSI ด้วย Wilder's smoothing (มาตรฐานเดียวกับ TradingView/โบรก)"""
     delta = series.diff()
     gain = delta.clip(lower=0)
     loss = -delta.clip(upper=0)
-    avg_gain = gain.rolling(window=period, min_periods=period).mean()
-    avg_loss = loss.rolling(window=period, min_periods=period).mean()
-    # Wilder smoothing แบบง่าย (rolling mean) — เพียงพอสำหรับ screening
+    # Wilder smoothing = EMA ด้วย alpha = 1/period (ไม่ใช่ simple mean)
+    avg_gain = gain.ewm(alpha=1/period, min_periods=period, adjust=False).mean()
+    avg_loss = loss.ewm(alpha=1/period, min_periods=period, adjust=False).mean()
     rs = avg_gain / avg_loss.replace(0, np.nan)
     rsi = 100 - (100 / (1 + rs))
+    # ถ้า avg_loss=0 จริง (ขึ้นล้วน) RSI=100; ช่วงเริ่มต้นที่ยังไม่พอ period เติม 50
+    rsi = rsi.where(avg_loss != 0, 100)
     return rsi.fillna(50)
 
 
@@ -113,9 +117,30 @@ def detect_setup(df: pd.DataFrame, lookback_range: int = 15) -> dict:
     if already_broke:
         reasons.append("⚡ เบรคแนวต้านแล้ว พร้อม volume ยืนยัน")
 
+    # ตรวจ RSI Bullish Divergence (ทรง low กำลังกลับตัว)
+    has_divergence = False
+    divergence_reason = ""
+    try:
+        import config as _cfg
+        _div_enabled = getattr(_cfg, "ENABLE_RSI_DIVERGENCE", True)
+    except Exception:
+        _div_enabled = True
+    try:
+        from divergence import detect_bullish_divergence
+        div = detect_bullish_divergence(df) if _div_enabled else {"has_divergence": False}
+        if div.get("has_divergence"):
+            has_divergence = True
+            divergence_reason = div["reason"]
+            reasons.append(f"🔄 RSI Bullish Divergence: {divergence_reason}")
+            score += 1  # ให้คะแนนพิเศษ
+    except Exception:
+        pass
+
     return {
         "valid": True,
         "score": score,
+        "has_divergence": has_divergence,
+        "divergence_reason": divergence_reason,
         "max_score": 5,
         "close": round(float(last["Close"]), 2),
         "ema20": round(float(last["EMA20"]), 2),
@@ -132,10 +157,19 @@ def detect_setup(df: pd.DataFrame, lookback_range: int = 15) -> dict:
 
 
 def is_actionable(setup: dict, min_score: int = 3) -> bool:
-    """ตัดสินว่า setup นี้ 'น่าสนใจพอจะแจ้งเตือน' หรือไม่"""
+    """
+    ตัดสินว่า setup นี้ 'น่าสนใจพอจะแจ้งเตือน' หรือไม่
+    เข้าเกณฑ์เมื่อ score ถึงเกณฑ์ และมีอย่างน้อย 1 ใน 3 patterns:
+      - breakout setup (ตั้งท่าเบรค)
+      - already broke (เบรคแล้ว)
+      - RSI bullish divergence (ทรง low กำลังกลับตัว)
+    """
     if not setup.get("valid"):
         return False
-    return setup["score"] >= min_score and (setup["breakout_setup"] or setup["already_broke"])
+    has_pattern = (setup.get("breakout_setup") or
+                   setup.get("already_broke") or
+                   setup.get("has_divergence"))
+    return setup["score"] >= min_score and has_pattern
 
 
 if __name__ == "__main__":

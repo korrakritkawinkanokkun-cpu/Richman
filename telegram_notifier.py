@@ -75,7 +75,14 @@ def format_alert_message(market: str, results: list) -> str:
     for r in results_sorted:
         t = r["ticker"]
         s = r["setup"]
-        tag = "⚡เบรคแล้ว" if s["already_broke"] else "🎯ตั้งท่าเบรค"
+        if s.get("has_divergence") and not s["already_broke"] and not s.get("breakout_setup"):
+            tag = "🔄 RSI Divergence (ทรง low กลับตัว)"
+        elif s["already_broke"]:
+            tag = "⚡เบรคแล้ว"
+        elif s.get("has_divergence"):
+            tag = "🎯ตั้งท่าเบรค + 🔄Divergence"
+        else:
+            tag = "🎯ตั้งท่าเบรค"
         block = [
             f"\n*{t}* {tag} (score {s['score']}/{s['max_score']})",
             f"ราคา: {s['close']} | RSI: {s['rsi']} | Vol: {s['vol_ratio']}x",
