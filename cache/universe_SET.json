@@ -1,5 +1,5 @@
 {
-  "date": "2026-06-22",
+  "date": "2026-06-23",
   "count": 500,
   "tickers": [
     "AAPL01",
@@ -364,6 +364,7 @@
     "QH",
     "RAM",
     "RATCH",
+    "RBF",
     "RBLX06",
     "RCL",
     "RGTI03",
@@ -394,7 +395,6 @@
     "SIA19",
     "SINGTEL80",
     "SIRI",
-    "SISB",
     "SJWD",
     "SKR",
     "SKY",
