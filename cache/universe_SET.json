@@ -1,5 +1,5 @@
 {
-  "date": "2026-06-24",
+  "date": "2026-06-25",
   "count": 500,
   "tickers": [
     "AAPL01",
@@ -20,7 +20,6 @@
     "AIA06",
     "AIA19",
     "AIA23",
-    "AIMIRT",
     "ALAB01",
     "ALUCON",
     "AMAT01",
@@ -388,6 +387,7 @@
     "SEAGATE23",
     "SEMB19",
     "SENSE23",
+    "SGC",
     "SGP",
     "SGX19",
     "SHOP03",
