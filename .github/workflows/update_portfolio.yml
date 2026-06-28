@@ -1,0 +1,29 @@
+name: Update Portfolio Dashboard
+
+on:
+  schedule:
+    # 17:00 เวลาไทย (Asia/Bangkok, UTC+7) = 10:00 UTC
+    - cron: "0 10 * * *"
+  workflow_dispatch: {}   # ปุ่มกดรันมือได้จาก GitHub Actions tab
+
+jobs:
+  update-portfolio:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+        working-directory: ./  # แก้ path ถ้าไฟล์อยู่ในโฟลเดอร์ย่อย เช่น portfolio_bot/
+
+      - name: Run portfolio updater
+        env:
+          GOOGLE_SHEETS_CREDS: ${{ secrets.GOOGLE_SHEETS_CREDS }}
+          PORTFOLIO_SHEET_ID: ${{ secrets.PORTFOLIO_SHEET_ID }}
+        run: python update_portfolio.py
