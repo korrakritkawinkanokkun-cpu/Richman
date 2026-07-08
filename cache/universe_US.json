@@ -1,6 +1,6 @@
 {
-  "date": "2026-07-07",
-  "count": 7085,
+  "date": "2026-07-08",
+  "count": 7086,
   "tickers": [
     "A",
     "AA",
@@ -922,6 +922,7 @@
     "BKTI",
     "BKU",
     "BKV",
+    "BKYI",
     "BL",
     "BLBD",
     "BLCO",
@@ -1307,6 +1308,7 @@
     "CENTA",
     "CENX",
     "CEPF",
+    "CEPL",
     "CEPO",
     "CEPS",
     "CEPU",
@@ -4722,7 +4724,6 @@
     "OLN",
     "OLOX",
     "OLP",
-    "OLPX",
     "OM",
     "OMAB",
     "OMC",
