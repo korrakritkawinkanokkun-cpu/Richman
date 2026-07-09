@@ -1,5 +1,5 @@
 {
-  "date": "2026-07-08",
+  "date": "2026-07-09",
   "count": 500,
   "tickers": [
     "AAPL01",
@@ -64,6 +64,7 @@
     "BAC03",
     "BAM",
     "BANPU",
+    "BAREIT",
     "BAY",
     "BBL",
     "BCH",
@@ -180,6 +181,7 @@
     "GOOG80",
     "GOOGL01",
     "GOOGL03",
+    "GOOGL19",
     "GPSC",
     "GRAB80",
     "GSUS06",
@@ -247,7 +249,6 @@
     "LH",
     "LHFG",
     "LHHOTEL",
-    "LHSC",
     "LITE01",
     "LITE23",
     "LLY23",
@@ -380,7 +381,6 @@
     "SAUCE",
     "SAWAD",
     "SBUX80",
-    "SCAP",
     "SCB",
     "SCC",
     "SCCC",
