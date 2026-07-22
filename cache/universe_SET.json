@@ -1,5 +1,5 @@
 {
-  "date": "2026-07-21",
+  "date": "2026-07-22",
   "count": 500,
   "tickers": [
     "AAOI03",
@@ -419,8 +419,8 @@
     "SPI",
     "SPOT06",
     "SPRC",
+    "STECON",
     "STEG19",
-    "STGT",
     "STM03",
     "SUNNY19",
     "SUNNY80",
