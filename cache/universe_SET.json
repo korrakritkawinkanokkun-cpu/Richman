@@ -1,5 +1,5 @@
 {
-  "date": "2026-07-22",
+  "date": "2026-07-23",
   "count": 500,
   "tickers": [
     "AAOI03",
@@ -125,7 +125,6 @@
     "CPNREIT",
     "CRC",
     "CRDO23",
-    "CREDIT",
     "CRM01",
     "CRM06",
     "CRM80",
@@ -419,8 +418,9 @@
     "SPI",
     "SPOT06",
     "SPRC",
-    "STECON",
+    "STA",
     "STEG19",
+    "STGT",
     "STM03",
     "SUNNY19",
     "SUNNY80",
